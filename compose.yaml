@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine # Usa uma imagem oficial leve do PostgreSQL
+    container_name: postgres_db
+    restart: always
+    
+    environment:
+      # Variáveis de ambiente padrão do PostgreSQL
+      POSTGRES_USER: postgres  # Nome do usuário, conforme solicitado
+      POSTGRES_PASSWORD: root123 # Senha do usuário, conforme solicitado
+      POSTGRES_DB: mydatabase # Nome de um banco de dados inicial (opcional)
+
+    ports:
+      # Mapeia a porta padrão do container (5432) para a porta padrão do host (5432)
+      - "5432:5432" 
+
+    volumes:
+      # Cria um volume persistente para armazenar os dados do PostgreSQL
+      # Isso garante que seus dados não serão perdidos ao remover e recriar o container
+      - postgres_data:/var/lib/postgresql/data
+
+# Definição dos volumes (volume nomeado)
+volumes:
+  postgres_data:
