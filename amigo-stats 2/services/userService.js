@@ -1,14 +1,5 @@
 const User = require('../models/user');
 
-const criarUsuario =(user, transaction) =>{
-    try {
-
-        return User.create(user, { transaction });
-    } catch (error) {
-        throw new Error('Error creating user: ' + error.message);
-    }
-
-}
 const acharTudo = () => {
     try {
         return User.findAll();
@@ -52,7 +43,6 @@ const atualizandoPorID = async (id, { name, email, password, role, lastLogin }) 
 };
 
 module.exports = {
-    criarUsuario,
     acharTudo,
     deletando,
     opterPorID,

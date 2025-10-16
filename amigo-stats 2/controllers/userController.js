@@ -1,5 +1,4 @@
 const userService = require('../services/userService');
-const Sequelize = require('../database');
 
 module.exports = {
 
@@ -12,20 +11,6 @@ module.exports = {
         }
     },
 
-    async criarUsuario (req, res){
-        const transaction = await Sequelize.transaction();
-
-        try {
-            const { name, email, password, role, lastLogin } = req.body;
-
-            const usuario = await userService.criarUsuario({name, email, password, role, lastLogin}, transaction);
-            await transaction.commit();
-            return res.json(usuario);
-        } catch (error) {
-            await transaction.rollback()
-            return res.status(500).json({ error: error.message });
-        }
-    },
     async deletar (req, res){
         try {
             const { id } = req.params;
