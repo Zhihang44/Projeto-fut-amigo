@@ -1,18 +1,33 @@
 const jwt = require('jsonwebtoken');
 const authConfig = require('../config/auth');
+const User = require('../models/user');
 
-module.exports = (req, res, next) => {
-    const token = req.headers.authorization.split(' ')[1];
-
-    if (!token) {
-        return res.status(401).json({ error: 'token não encontrado' });
-    }
-
+const verificaTokens = async (req, res) => {
     try {
-        const decoded = jwt.verify(token, authConfig.jwt.secret);
-        req.userId = decoded.id;
-        return next();
+        const authHeader = req.headers.authorization;
+
+        if (!authHeader) {
+            return res.status(401).json({ error: 'Token não fornecido' });
+        }
+
+        const [, token] = authHeader.split(' ');
+
+        try {
+            const decoded = jwt.verify(token, authConfig.jwt.secret);
+            
+            const user = await User.findOne({ where: { id: decoded.id } });
+            
+            if (!user) {
+                return res.status(401).json({ error: 'Usuário não encontrado' });
+            }
+
+            return user;
+        } catch (error) {
+            return res.status(401).json({ error: 'Token inválido' });
+        }
     } catch (error) {
-        return res.status(401).json({ error: 'Token inválido' });
+        return res.status(500).json({ error: 'Erro na autenticação' });
     }
 };
+
+module.exports = verificaTokens;

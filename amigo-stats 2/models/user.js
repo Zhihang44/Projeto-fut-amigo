@@ -1,6 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 
-class user extends Model{
+class User extends Model {
   static init(sequelize){
     super.init({
       name: DataTypes.STRING,
@@ -10,14 +10,12 @@ class user extends Model{
       lastLogin: DataTypes.DATE,
     }, {
       sequelize,
-       timestamps: true,
-       underscored: true,
+      modelName: 'users',
+      timestamps: true,
+      underscored: true,
     })
+    return this;
   }
-  /*static associate(models){
-    User.hasOne(models.UserPreference, { foreignKey: 'userId' });
-    models.UserPreference.belongsTo(User, { foreignKey: 'userId' });
-  }*/
 }
 
-module.exports = user;
+module.exports = User;
