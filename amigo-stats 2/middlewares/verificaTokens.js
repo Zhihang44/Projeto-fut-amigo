@@ -4,7 +4,8 @@ const User = require('../models/user');
 
 const verificaTokens = async (req, res) => {
     try {
-        const authHeader = req.headers.authorization;
+
+        const authHeader = req;
 
         if (!authHeader) {
             return res.status(401).json({ error: 'Token não fornecido' });
@@ -14,7 +15,7 @@ const verificaTokens = async (req, res) => {
 
         try {
             const decoded = jwt.verify(token, authConfig.jwt.secret);
-            
+
             const user = await User.findOne({ where: { id: decoded.id } });
             
             if (!user) {
@@ -30,4 +31,6 @@ const verificaTokens = async (req, res) => {
     }
 };
 
-module.exports = verificaTokens;
+module.exports = {
+    verificaTokens
+};

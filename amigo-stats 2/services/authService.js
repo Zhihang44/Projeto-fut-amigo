@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const authConfig = require('../config/auth');
+const tokens = require('../middlewares/verificaTokens');
 
 const criarUsuario = async (name, email, password, role) => {
     try {
@@ -44,21 +45,34 @@ const login = async (email, password) => {
             { expiresIn: authConfig.jwt.expiresIn }
         );
 
-        return {
-            user: {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                role: user.role
-            },
-            token
-        };
+        return token;
+
     } catch (error) {
         throw new Error('Erro na autenticação: ' + error.message);
     }
 };
 
+const mudarSenha = async (email, oldPassword, newPassword, authHeader) => {
+    const user = await tokens.verificaTokens(authHeader);
+
+    if (user.email !== email) {
+        throw new Error('Email não corresponde ao token fornecido');
+    }
+
+    const isValidPassword = await bcrypt.compare(oldPassword, user.password);
+    
+    if (!isValidPassword) {
+        throw new Error('Senha antiga inválida');
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    await user.update({ password: hashedNewPassword });
+
+    return user;
+};
+
 module.exports = {
     criarUsuario,
-    login
+    login,
+    mudarSenha
 };
