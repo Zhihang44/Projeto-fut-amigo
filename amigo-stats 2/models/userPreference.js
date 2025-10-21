@@ -12,6 +12,11 @@ class userPreference extends Model{
       sequelize
     })
   }
+
+  static associate(models){
+    userPreference.belongsTo(models.User, { foreignKey: 'userId' });
+  } 
+
 }
 
 module.exports = userPreference;

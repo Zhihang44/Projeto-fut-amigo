@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const dbConfig = require('../config/database');
 const User = require('../models/user');
+const UserPreference = require('../models/userPreference');
 
 const connection = new Sequelize(
     dbConfig.database,
@@ -13,5 +14,7 @@ const connection = new Sequelize(
 );
 
 User.init(connection);
+UserPreference.init(connection);
+UserPreference.associate(connection.models);
 
 module.exports = connection;
