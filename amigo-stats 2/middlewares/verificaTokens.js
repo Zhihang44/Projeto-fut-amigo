@@ -16,13 +16,13 @@ const verificaTokens = async (req, res) => {
         try {
             const decoded = jwt.verify(token, authConfig.jwt.secret);
 
-            const user = await User.findOne({ where: { id: decoded.id } });
+            // const user = await User.findOne({ where: { id: decoded.id } });
             
-            if (!user) {
-                return res.status(401).json({ error: 'Usuário não encontrado' });
-            }
+            // if (!user) {
+            //     return res.status(401).json({ error: 'Usuário não encontrado' });
+            // }
 
-            return user;
+            return decoded;
         } catch (error) {
             return res.status(401).json({ error: 'Token inválido' });
         }

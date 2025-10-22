@@ -3,12 +3,12 @@ const tokens = require('../middlewares/verificaTokens');
 
 const obtendoPreferencias = async (authHeader) => {
     try {
-        const user = await tokens.verificaTokens(authHeader);
-        if (!user) {
+        const decodedToken = await tokens.verificaTokens(authHeader);
+        if (!decodedToken) {
             throw new Error('Usuário não encontrado...');
         }
-        return await UserPreference.findOne({ where: { userId: user.id } });
-    } catch (error) {   
+        return await UserPreference.findOne({ where: { userId: decodedToken.id } });
+    } catch (error) {
         throw new Error('Erro ao obter preferências do usuário: ' + error.message);
     }   
 };
