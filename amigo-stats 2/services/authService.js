@@ -7,14 +7,17 @@ const tokens = require('../middlewares/verificaTokens');
 const criarUsuario = async (name, email, password, role) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        
-        return User.create({ 
-            name, 
-            email, 
-            password: hashedPassword, 
-            role,
-            lastLogin: new Date()
-        });
+
+        if(role === 'admin') {
+            return User.create({ 
+                name, 
+                email, 
+                password: hashedPassword, 
+                role,
+                lastLogin: new Date()});
+        } else{
+        return ("So é permitido registrar admins");
+        }
     } catch (error) {
         throw new Error('Erro ao criar usuário: ' + error.message);
     }

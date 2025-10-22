@@ -8,7 +8,7 @@ const routes = express.Router();
 const prefix = '/api/';
 
 // Rotas de autenticação
-routes.post(`${prefix}auth/register`, verificaAdmin, authController.criarUsuario);
+routes.post(`${prefix}auth/register`, authController.criarUsuario);
 routes.post(`${prefix}auth/login`, authController.login);
 routes.post(`${prefix}auth/change-password`, authController.mudarSenha);
 
