@@ -1,74 +1,115 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
-const tokens = require('../middlewares/verificaTokens');
+const { verificaTokens } = require('../middlewares/verificaTokens');
 
-const acharTudo = () => {
+const acharTudo = async () => {
     try {
-        return User.findAll();
+        const usuarios = await User.findAll({
+            attributes: { exclude: ['password'] }
+        });
+        return usuarios;
     } catch (error) {
-        throw new Error('Error fetching users: ' + error.message);
+        throw new Error('Erro ao buscar usuários: ' + error.message);
     }
 };
+
 const deletando = async (id) => {
     try {
         const usuario = await User.findOne({ where: { id } });
         if (!usuario) {
-            throw new Error('Usuário não encontrado...');
+            throw new Error('Usuário não encontrado');
         }
         await usuario.destroy();
     } catch (error) {
-        throw new Error('Error deleting user: ' + error.message);
+        throw new Error('Erro ao deletar usuário: ' + error.message);
     }
 };
+
 const obterPorID = async (id) => {
     try {
-        const usuario = await User.findOne({ where: { id } });
+        const usuario = await User.findOne({
+            where: { id },
+            attributes: { exclude: ['password'] }
+        });
         if (!usuario) {
-            throw new Error('Usuário não encontrado...');
+            throw new Error('Usuário não encontrado');
         }
         return usuario;
     } catch (error) {
-        throw new Error('Error fetching user by ID: ' + error.message);
+        throw new Error('Erro ao buscar usuário: ' + error.message);
     }
 };
-const atualizandoPorID = async (id, { name, email, password, role, lastLogin }) => {
+
+const atualizandoPorID = async (id, dados) => {
     try {
         const usuario = await User.findOne({ where: { id } });
         if (!usuario) {
-            throw new Error('Usuário não encontrado...');
+            throw new Error('Usuário não encontrado');
         }
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await usuario.update({ name, email, password: hashedPassword, role, lastLogin });
-        return usuario;
+
+        // Apenas faz hash se a senha foi fornecida
+        if (dados.password) {
+            dados.password = await bcrypt.hash(dados.password, 10);
+        } else {
+            delete dados.password; // Remove do objeto se não foi fornecida
+        }
+
+        await usuario.update(dados);
+
+        // Retorna usuário sem a senha
+        const { password, ...usuarioSemSenha } = usuario.toJSON();
+        return usuarioSemSenha;
     } catch (error) {
-        throw new Error('Error updating user: ' + error.message);
+        throw new Error('Erro ao atualizar usuário: ' + error.message);
     }
 };
-const atualizaAutenticado = async (authHeader, { name, email, password, role, lastLogin }) => {
+
+const atualizaAutenticado = async (authHeader, dados) => {
     try {
-        const user = await tokens.verificaTokens(authHeader);
-        const usuario = await User.findOne({ where: { id: user.id } });
+        const userToken = await verificaTokens(authHeader);
+        const usuario = await User.findOne({ where: { id: userToken.id } });
+
         if (!usuario) {
-            throw new Error('Usuário não encontrado...');
+            throw new Error('Usuário não encontrado');
         }
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await usuario.update({ name, email, password: hashedPassword, role, lastLogin });
-        return usuario;
+
+        // Não permite que usuário comum altere o próprio role
+        if (userToken.role !== 'admin') {
+            delete dados.role;
+        }
+
+        // Apenas faz hash se a senha foi fornecida
+        if (dados.password) {
+            dados.password = await bcrypt.hash(dados.password, 10);
+        } else {
+            delete dados.password;
+        }
+
+        await usuario.update(dados);
+
+        // Retorna usuário sem a senha
+        const { password, ...usuarioSemSenha } = usuario.toJSON();
+        return usuarioSemSenha;
     } catch (error) {
-        throw new Error('Error updating authenticated user: ' + error.message);
+        throw new Error('Erro ao atualizar usuário autenticado: ' + error.message);
     }
 };
-const obterAutenticado = async (req, res) => {
+
+const obterAutenticado = async (authHeader) => {
     try {
-        const authHeader = req;
-        const user = await tokens.verificaTokens(authHeader);
-        const usuario = await User.findOne({ where: { id: user.id } });
+        const userToken = await verificaTokens(authHeader);
+        const usuario = await User.findOne({
+            where: { id: userToken.id },
+            attributes: { exclude: ['password'] }
+        });
+
         if (!usuario) {
-            throw new Error('Usuário não encontrado...');
+            throw new Error('Usuário não encontrado');
         }
+
         return usuario;
     } catch (error) {
-        throw new Error('Error fetching authenticated user: ' + error.message);
+        throw new Error('Erro ao buscar usuário autenticado: ' + error.message);
     }
 };
 
