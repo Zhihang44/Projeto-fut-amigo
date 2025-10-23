@@ -1,7 +1,6 @@
 const tokens = require('./verificaTokens');
 
 const verificaAdmin = async (req, res, next) => {
-console.log('Verificando administrador...');
     const authHeader = req.headers.authorization;
     try {
         const userAdmin = await tokens.verificaTokens(authHeader, res);

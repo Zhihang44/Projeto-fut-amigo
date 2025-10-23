@@ -21,8 +21,11 @@ module.exports = {
             if (!authHeader) {
                 return res.status(401).json({ error: 'Token não fornecido' });
             }
-            const { theme, notifications, language } = req.body;
-            const preferencias = await userPreferenceService.atualizandoPreferencias(authHeader, { theme, notifications, language });
+            const { theme, language, emailNotifications, twoFactorAuth } = req.body;
+            if (!theme || !language || !emailNotifications || !twoFactorAuth) {
+                return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
+            }
+            const preferencias = await userPreferenceService.atualizandoPreferencias(authHeader, { theme, language, emailNotifications, twoFactorAuth });
             return res.json(preferencias);
         } catch (error) {
             return res.status(500).json({ error: error.message });

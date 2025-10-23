@@ -8,7 +8,7 @@ module.exports = {
             if (!name || !email || !password) {
                 return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
             }
-            const usuario = await authService.criarUsuario(name, email, password, role || 'user');
+            const usuario = await authService.criarUsuario(name, email, password, role);
             return res.status(201).json(usuario);
 
         } catch (error) {

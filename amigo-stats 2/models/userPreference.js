@@ -14,7 +14,7 @@ class userPreference extends Model{
   }
 
   static associate(models){
-    userPreference.belongsTo(models.User, { foreignKey: 'userId' });
+    userPreference.belongsTo(models.users, { foreignKey: 'userId' });
   } 
 
 }
