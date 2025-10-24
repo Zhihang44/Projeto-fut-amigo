@@ -2,35 +2,39 @@ const jwt = require('jsonwebtoken');
 const authConfig = require('../config/auth');
 const User = require('../models/user');
 
-const verificaTokens = async (req, res) => {
+// Função para verificar e decodificar o token JWT
+const verificaTokens = async (authHeader) => {
+    if (!authHeader) {
+        throw new Error('Token não fornecido');
+    }
+
+    const [, token] = authHeader.split(' ');
+
+    if (!token) {
+        throw new Error('Token mal formatado');
+    }
+
     try {
-
-        const authHeader = req;
-
-        if (!authHeader) {
-            return res.status(401).json({ error: 'Token não fornecido' });
-        }
-
-        const [, token] = authHeader.split(' ');
-
-        try {
-            const decoded = jwt.verify(token, authConfig.jwt.secret);
-
-            // const user = await User.findOne({ where: { id: decoded.id } });
-            
-            // if (!user) {
-            //     return res.status(401).json({ error: 'Usuário não encontrado' });
-            // }
-
-            return decoded;
-        } catch (error) {
-            return res.status(401).json({ error: 'Token inválido' });
-        }
+        const decoded = jwt.verify(token, authConfig.jwt.secret);
+        return decoded;
     } catch (error) {
-        return res.status(500).json({ error: 'Erro na autenticação' });
+        throw new Error('Token inválido ou expirado');
+    }
+};
+
+// Middleware para proteger rotas que exigem autenticação
+const verificaAutenticacao = async (req, res, next) => {
+    try {
+        const authHeader = req.headers.authorization;
+        const decoded = await verificaTokens(authHeader);
+        req.user = decoded;
+        next();
+    } catch (error) {
+        return res.status(401).json({ error: error.message });
     }
 };
 
 module.exports = {
-    verificaTokens
+    verificaTokens,
+    verificaAutenticacao
 };

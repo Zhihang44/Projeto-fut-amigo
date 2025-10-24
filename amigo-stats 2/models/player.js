@@ -1,27 +1,57 @@
 const { Model, DataTypes } = require('sequelize');
 
-class player extends Model{
-  static init(sequelize){
+class Player extends Model {
+  static init(sequelize) {
     super.init({
-      name: DataTypes.STRING,
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
       nickname: DataTypes.STRING,
       birthdate: DataTypes.DATEONLY,
       nationality: DataTypes.STRING,
-      document: DataTypes.STRING,
-      email: DataTypes.STRING,
+      document: {
+        type: DataTypes.STRING,
+        unique: true
+      },
+      email: {
+        type: DataTypes.STRING,
+        unique: true,
+        validate: {
+          isEmail: true
+        }
+      },
       position: DataTypes.STRING,
       shirtNumber: DataTypes.INTEGER,
-      foot: DataTypes.ENUM('Direito', 'Esquerdo', 'Ambos'),
+      foot: {
+        type: DataTypes.ENUM('Direito', 'Esquerdo', 'Ambos'),
+        defaultValue: 'Direito'
+      },
       height: DataTypes.INTEGER,
       weight: DataTypes.INTEGER,
-      status: DataTypes.ENUM('Ativo', 'Lesionado', 'Suspenso', 'Aposentado'),
+      status: {
+        type: DataTypes.ENUM('Ativo', 'Lesionado', 'Suspenso', 'Aposentado'),
+        defaultValue: 'Ativo'
+      },
       contractEnd: DataTypes.DATEONLY,
       notes: DataTypes.TEXT,
-      profileImage: DataTypes.STRING,
+      profileImage: DataTypes.STRING
     }, {
-      sequelize
-    })
+      sequelize,
+      modelName: 'players',
+      tableName: 'players',
+      timestamps: true,
+      underscored: true
+    });
+    return this;
+  }
+
+  static associate(models) {
+    // Exemplo: Um jogador pertence a um clube
+    // this.belongsTo(models.clubs, { foreignKey: 'clubId', as: 'club' });
+    // Um jogador tem muitas imagens
+    // this.hasMany(models.player_images, { foreignKey: 'playerId', as: 'images' });
   }
 }
 
-module.exports = player;
+module.exports = Player;

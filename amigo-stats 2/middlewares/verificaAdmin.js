@@ -1,19 +1,18 @@
-const tokens = require('./verificaTokens');
+const { verificaTokens } = require('./verificaTokens');
 
 const verificaAdmin = async (req, res, next) => {
-    const authHeader = req.headers.authorization;
     try {
-        const userAdmin = await tokens.verificaTokens(authHeader, res);
+        const authHeader = req.headers.authorization;
+        const user = await verificaTokens(authHeader);
 
-            if (userAdmin.role !== 'admin') {
-                return res.status(403).json({ error: 'Acesso negado. Apenas administradores podem realizar esta ação.' });
-            }
-        
-            return next()
+        if (user.role !== 'admin') {
+            return res.status(403).json({ error: 'Acesso negado. Apenas administradores podem realizar esta ação.' });
+        }
+
+        req.user = user;
+        next();
     } catch (error) {
-        console.log(error);
-        
-        return res.status(500).json({ error: 'Erro na verificação de administrador' });
+        return res.status(401).json({ error: error.message });
     }
 };
 
