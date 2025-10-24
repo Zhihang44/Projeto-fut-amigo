@@ -1,9 +1,12 @@
 const { Model, DataTypes } = require('sequelize');
 
-class club extends Model{
-  static init(sequelize){
+class Club extends Model {
+  static init(sequelize) {
     super.init({
-      name: DataTypes.STRING,
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
       shortName: DataTypes.STRING,
       founded: DataTypes.INTEGER,
       country: DataTypes.STRING,
@@ -12,17 +15,33 @@ class club extends Model{
       stadium: DataTypes.STRING,
       capacity: DataTypes.INTEGER,
       president: DataTypes.STRING,
-      email: DataTypes.STRING,
+      email: {
+        type: DataTypes.STRING,
+        unique: true,
+        validate: {
+          isEmail: true
+        }
+      },
       website: DataTypes.STRING,
       phone: DataTypes.STRING,
       primaryColor: DataTypes.STRING,
       secondaryColor: DataTypes.STRING,
       description: DataTypes.TEXT,
-      logo: DataTypes.STRING,
+      logo: DataTypes.STRING
     }, {
-      sequelize
-    })
+      sequelize,
+      modelName: 'clubs',
+      tableName: 'clubs',
+      timestamps: true,
+      underscored: true
+    });
+    return this;
+  }
+
+  static associate(models) {
+    // Exemplo: Um clube tem muitos jogadores
+    // this.hasMany(models.players, { foreignKey: 'clubId', as: 'players' });
   }
 }
 
-module.exports = club;
+module.exports = Club;
