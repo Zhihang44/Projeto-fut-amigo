@@ -8,7 +8,11 @@ const userPreferenceController = require('../controllers/userPreferenceControlle
 const routes = express.Router();
 const prefix = '/api/';
 
-// Rotas de autenticação (públicas)
+// Rotas do userPreference
+routes.get(`${prefix}user/preferences`, userPreferenceController.obterPreferencias);
+routes.put(`${prefix}user/preferences`, userPreferenceController.atualizarPreferencias);
+
+// Rotas de autenticação
 routes.post(`${prefix}auth/register`, authController.criarUsuario);
 routes.post(`${prefix}auth/login`, authController.login);
 routes.post(`${prefix}auth/change-password`, verificaAutenticacao, authController.mudarSenha);
@@ -25,6 +29,5 @@ routes.put(`${prefix}user/profile`, verificaAutenticacao, userController.atualiz
 routes.get(`${prefix}user`, verificaAdmin, userController.listaToda);
 routes.get(`${prefix}user/:id`, verificaAdmin, userController.obterPerfilEspecifico);
 routes.put(`${prefix}user/:id`, verificaAdmin, userController.atualizarEspecifico);
-routes.delete(`${prefix}user/:id`, verificaAdmin, userController.deletar);
 
 module.exports = routes;
