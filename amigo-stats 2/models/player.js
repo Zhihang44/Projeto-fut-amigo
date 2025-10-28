@@ -47,10 +47,10 @@ class Player extends Model {
   }
 
   static associate(models) {
-    // Exemplo: Um jogador pertence a um clube
-    // this.belongsTo(models.clubs, { foreignKey: 'clubId', as: 'club' });
+    // Um jogador pertence a um clube
+    this.belongsTo(models.clubs, { foreignKey: 'clubId', as: 'club' });
     // Um jogador tem muitas imagens
-    // this.hasMany(models.player_images, { foreignKey: 'playerId', as: 'images' });
+    this.hasMany(models.playerImages, { foreignKey: 'playerId', as: 'images' });
   }
 }
 

@@ -31,10 +31,11 @@ class UserPreference extends Model {
       }
     }, {
       sequelize,
-      modelName: 'user_preferences',
-      tableName: 'user_preferences',
+      modelName: 'UserPreference',
+      tableName: 'userPreference',
       timestamps: true,
-      underscored: true
+      underscored: true,
+      logging:true, 
     });
     return this;
   }

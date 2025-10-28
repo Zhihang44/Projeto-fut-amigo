@@ -16,6 +16,10 @@ class User extends Model {
     })
     return this;
   }
+
+  static associate(models) {
+    this.hasOne(models.UserPreference, { foreignKey: 'userId', as: 'preference' });
+  }
 }
 
 module.exports = User;

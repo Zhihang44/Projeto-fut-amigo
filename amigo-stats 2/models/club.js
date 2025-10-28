@@ -39,8 +39,8 @@ class Club extends Model {
   }
 
   static associate(models) {
-    // Exemplo: Um clube tem muitos jogadores
-    // this.hasMany(models.players, { foreignKey: 'clubId', as: 'players' });
+    // Um clube tem muitos jogadores
+    this.hasMany(models.players, { foreignKey: 'clubId', as: 'players' });
   }
 }
 

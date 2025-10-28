@@ -313,6 +313,7 @@ UserPreference.belongsTo(User, { foreignKey: 'userId' });
 |--------|----------|-----------|
 | GET | /api/users/preferences | Obtém preferências do usuário atual |
 | PUT | /api/users/preferences | Atualiza preferências do usuário atual |
+| POST | /api/users/prefences | Criar a preferência do usuário atual |
 
 ### 6.4 Jogadores
 

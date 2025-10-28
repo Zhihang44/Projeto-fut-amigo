@@ -1,21 +1,30 @@
 const UserPreference = require('../models/userPreference');
 const { verificaTokens } = require('../middlewares/verificaTokens');
 
+const criandoPreferencias = async (authHeader, preferencias) => {
+    if(!preferencias.theme || !preferencias.language || !preferencias.emailNotifications || !preferencias.twoFactorAuth) {
+        throw new Error('Todos os campos são obrigatórios');
+    }
+    const decodedToken = await verificaTokens(authHeader);
+    preferencias.userId = decodedToken.id;
+
+    await UserPreference.create(preferencias);
+    return preferencias;
+};
+
 const obtendoPreferencias = async (authHeader) => {
     try {
+    
         const decodedToken = await verificaTokens(authHeader);
 
-        let preferencias = await UserPreference.findOne({ where: { userId: decodedToken.id } });
-
-        // Se não existir preferências, cria com valores padrão
+        let preferencias = await UserPreference.findOne({ 
+            where: {
+                userId: decodedToken.id 
+            }
+        });  
+             
         if (!preferencias) {
-            preferencias = await UserPreference.create({
-                userId: decodedToken.id,
-                emailNotifications: true,
-                twoFactorAuth: false,
-                theme: 'system',
-                language: 'pt-BR'
-            });
+            throw new Error('Preferências não encontradas');
         }
 
         return preferencias;
@@ -33,9 +42,7 @@ const atualizandoPreferencias = async (authHeader, preferencias) => {
             // Atualiza apenas os campos fornecidos
             await userPreferences.update(preferencias);
         } else {
-            // Cria novas preferências
-            preferencias.userId = user.id;
-            userPreferences = await UserPreference.create(preferencias);
+            throw new Error('Preferências não encontradas');
         }
 
         return userPreferences;
@@ -46,5 +53,6 @@ const atualizandoPreferencias = async (authHeader, preferencias) => {
 
 module.exports = {
     obtendoPreferencias,
-    atualizandoPreferencias
+    atualizandoPreferencias,
+    criandoPreferencias
 };

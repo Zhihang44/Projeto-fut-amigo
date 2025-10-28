@@ -31,7 +31,7 @@ module.exports = {
     },
     async atualizarEspecifico (req, res){
         try {
-            const { id } = req.paramsna;
+            const { id } = req.params;
             const { name, email, password, role, lastLogin } = req.body;
             const usuario = await userService.atualizandoPorID(id, { name, email, password, role, lastLogin });
             return res.json(usuario);

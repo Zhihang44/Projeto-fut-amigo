@@ -53,6 +53,9 @@ const atualizandoPorID = async (id, dados) => {
         } else {
             delete dados.password; // Remove do objeto se não foi fornecida
         }
+        if (dados.role !== "admin") {
+            throw new Error('Role inválido');
+        }   
 
         await usuario.update(dados);
 
@@ -84,7 +87,9 @@ const atualizaAutenticado = async (authHeader, dados) => {
         } else {
             delete dados.password;
         }
-
+        if (dados.role !== "admin") {
+            throw new Error('Role inválido');
+        }   
         await usuario.update(dados);
 
         // Retorna usuário sem a senha
