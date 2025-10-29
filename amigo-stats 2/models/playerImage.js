@@ -18,8 +18,8 @@ class PlayerImage extends Model {
       }
     }, {
       sequelize,
-      modelName: 'playerImages',
-      tableName: 'playerImages',
+      modelName: 'PlayerImages',
+      tableName: 'player_images',
       timestamps: true,
       underscored: true
     });
@@ -27,7 +27,7 @@ class PlayerImage extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.players, { foreignKey: 'playerId', as: 'players' });
+    this.belongsTo(models.players, { foreignKey: 'playerId', as: 'player' });
   }
 }
 

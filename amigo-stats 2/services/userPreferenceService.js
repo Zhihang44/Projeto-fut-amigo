@@ -2,9 +2,6 @@ const UserPreference = require('../models/userPreference');
 const { verificaTokens } = require('../middlewares/verificaTokens');
 
 const criandoPreferencias = async (authHeader, preferencias) => {
-    if(!preferencias.theme || !preferencias.language || !preferencias.emailNotifications || !preferencias.twoFactorAuth) {
-        throw new Error('Todos os campos são obrigatórios');
-    }
     const decodedToken = await verificaTokens(authHeader);
     preferencias.userId = decodedToken.id;
 

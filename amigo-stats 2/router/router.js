@@ -6,6 +6,8 @@ const { verificaAutenticacao } = require('../middlewares/verificaTokens');
 const userPreferenceController = require('../controllers/userPreferenceController');
 const clubController = require('../controllers/clubController');
 const playerController = require('../controllers/playerController');   
+const playerImageController = require('../controllers/playerImageController');
+
 
 const routes = express.Router();
 const prefix = '/api/';
@@ -41,5 +43,9 @@ routes.post(`${prefix}player`, playerController.criarJogador);
 routes.put(`${prefix}player/:id`, playerController.atualizarEspecifico);
 routes.get(`${prefix}player/:id`, playerController.obterJogadorEspecifico);
 routes.delete(`${prefix}player/:id`, playerController.deletar);
+
+// Rotas de PlayerImage
+routes.delete(`${prefix}players/:id/images/:imageId`,playerImageController.removeImage);
+routes.post(`${prefix}players/:id/images`, playerImageController.addImage);
 
 module.exports = routes;  

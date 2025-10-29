@@ -50,7 +50,7 @@ class Player extends Model {
     // Um jogador pertence a um clube
     this.belongsTo(models.clubs, { foreignKey: 'clubId', as: 'club' });
     // Um jogador tem muitas imagens
-    this.hasMany(models.playerImages, { foreignKey: 'playerId', as: 'images' });
+    this.hasMany(models.PlayerImages, { foreignKey: 'playerId', as: 'images' });
   }
 }
 
